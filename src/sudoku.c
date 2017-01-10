@@ -167,7 +167,7 @@ print_board(void)
 {
 	const char *restrict failure;
 
-	if (LIKELY(file_write_report(STDIN_FILENO,
+	if (LIKELY(file_write_report(STDOUT_FILENO,
 				     &board.buffer[0],
 				     BOARD_BUFFER_LENGTH,
 				     &failure)))
@@ -182,7 +182,7 @@ print_failed_to_solve(void)
 {
 	const char *restrict failure;
 
-	if (LIKELY(file_write_report(STDIN_FILENO,
+	if (LIKELY(file_write_report(STDOUT_FILENO,
 				     "failed to solve\n",
 				     sizeof("failed to solve\n"),
 				     &failure)))
@@ -206,14 +206,18 @@ solve_board(void)
 	struct Cell *const restrict cell = board.rem_cells;
 	++board.rem_cells;
 
+	/* fetch set of available numbers */
 	const unsigned int rem_moves = ~(  *(cell->row)
 					 | *(cell->col)
 					 | *(cell->block));
 
+	/* for moves 1 ... 9 */
 	move = 1 << 1;
 
 	do {
+		/* check if move is legal */
 		if (rem_moves & move) {
+			/* remove 'move' from member row, column, and block */
 			*(cell->row)   |= move;
 			*(cell->col)   |= move;
 			*(cell->block) |= move;
@@ -224,6 +228,7 @@ solve_board(void)
 				return true;
 			}
 
+			/* 'move' produced a failed branch, undo */
 			*(cell->row)   ^= move;
 			*(cell->col)   ^= move;
 			*(cell->block) ^= move;
