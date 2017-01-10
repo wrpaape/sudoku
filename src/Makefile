@@ -145,9 +145,9 @@ CC_ENV_FLAGS	:= -D__USE_FIXED_PROTOTYPES__ -D_GNU_SOURCE $(SYS_ENV_FLAGS)
 CC_BASE_FLAGS	:= -std=gnu99 -march=native $(CC_ENV_FLAGS) -I$(HEADER_DIR)
 
 ifeq (T,$(DEVELOPMENT_MODE))
-CC_FLAGS	:= -g -Wall $(CC_BASE_FLAGS)
-else
 CC_FLAGS	:= -O2 -funroll-loops $(CC_BASE_FLAGS)
+else
+CC_FLAGS	:= -g -Wall $(CC_BASE_FLAGS)
 endif
 
 # Linker

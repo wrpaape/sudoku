@@ -198,9 +198,11 @@ solve_board(void)
 {
 	unsigned int move;
 
+	/* if no more cells, must have solved */
 	if (board.rem_cells == board.cells_until)
 		return true;
 
+	/* fetch next cell */
 	struct Cell *const restrict cell = board.rem_cells;
 	++board.rem_cells;
 
@@ -210,13 +212,14 @@ solve_board(void)
 
 	move = 1 << 1;
 
-	while (1) {
+	do {
 		if (rem_moves & move) {
 			*(cell->row)   |= move;
 			*(cell->col)   |= move;
 			*(cell->block) |= move;
 
 			if (solve_board()) {
+				/* board solved, set token in display */
 				*(cell->token) = MOVE_TO_ASCII(move);
 				return true;
 			}
@@ -226,13 +229,12 @@ solve_board(void)
 			*(cell->block) ^= move;
 		}
 
-
 		move <<= 1;
-		if (move > (1 << 9)) {
-			--board.rem_cells;
-			return false;
-		}
-	}
+	} while (move <= (1 << 9));
+
+	/* failed to solve in this branch */
+	--board.rem_cells;
+	return false;
 }
 
 
