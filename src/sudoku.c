@@ -250,7 +250,9 @@ main(void)
 {
 	init_board();
 
+#if 0
 	print_board();
+#endif
 
 	if (solve_board())
 		print_board();
